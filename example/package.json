@@ -1,0 +1,28 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "test webpack",
+  "main": "n",
+  "dependencies": {
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2"
+  },
+  "devDependencies": {
+    "babel": "^6.0.15",
+    "babel-core": "^6.1.2",
+    "babel-loader": "^6.0.1",
+    "babel-preset-es2015": "^6.1.2",
+    "babel-preset-react": "^6.1.2",
+    "react-hot-loader": "^1.3.0",
+    "webpack": "^1.12.3",
+    "webpack-dev-server": "^1.11.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-nginx": "nginx -c /Users/xiongbo/Desktop/Flux/todo/nginx.conf",
+    "hmr": "webpack-dev-server --inline --hot --devtool eval --progress --colors --content-base src/",
+    "start": ""
+  },
+  "author": "xb",
+  "license": "ISC"
+}
