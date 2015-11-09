@@ -2,7 +2,7 @@
 基于facebook官方flux模型，进行了一些整理和加工，隐藏了dispatcher，简化了flux的操作流程；
 
 
-<img src="./docs/my_flux.png" style="width: 100%;" />
+<img src="https://github.com/xblxc/flux/blob/master/docs/my_flux.jpg" style="width: 100%;" />
 
 
 # Quick start
