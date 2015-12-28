@@ -1,5 +1,5 @@
 {
-  "name": "flux",
+  "name": "easy-flux",
   "version": "0.2.0",
   "description": "This is just a mix of Dispatcher, EventEmmiter , and some optimization for a better encoding and debugg experience;",
   "main": "index.js",
