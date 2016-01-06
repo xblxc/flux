@@ -3,102 +3,104 @@
  * for a better encoding and debugg experience;
  */
 
-import Dispatcher from './lib/dispatcher';
-import Store from './lib/store';
-import * as Util from './lib/util';
+var Dispatcher = require('./lib/dispatcher');
+var Store = require('./lib/store');
+var Util = require('./lib/util');
 
-class Flux {
+function Flux() {
+  this.dev = opts ? opts.dev : this.isDev();
+  this.trace = opts && opts.trace;
 
-  constructor(opts){
-    this.dev = opts ? opts.dev : this.isDev();
-    this.trace = opts && opts.trace;
+  this.dispatcher = new Dispatcher();
 
-    this.dispatcher = new Dispatcher(); 
+  this.actions = []; //多action，单store设计
+  this.store = null;
+}
 
-    this.actions = []; //多action，单store设计
-    this.store = null;
-  }
-
-  logIn(type, data) {
+Flux.prototype = {
+  logIn: function(type, data) {
     //动态监测的好处：可以运行时更新调整配置
-    if(this.dev){
+    if (this.dev) {
       var _log = this.trace ? console.trace : console.log;
       _log.call(console, '%c--->', this.getLogStyle(data), type + ':', data);
     }
-  }
+  },
 
-  logOut(type, data) {
-    if(this.dev){
+  logOut: function(type, data) {
+    if (this.dev) {
       var _log = this.trace ? console.trace : console.log;
       _log.call(console, '%c<---', this.getLogStyle(data), type + ':', data);
     }
-  }
+  },
 
-  resolve(type, data) {
-    //var type = arguments.callee.caller.name; 
+  resolve: function(type, data) {
+    //var type = arguments.callee.caller.name;
     this.logIn(type, data);
     this.dispatcher.dispatch({
       type: type,
       data: data
     });
-  }
+  },
 
-  createAction(initFunc) {
+  createAction: function(initFunc) {
+    var _this = this;
+
     var Action = {};
     var action_map = initFunc();
-    Object.keys(action_map).forEach( ac => {
-      Action[ac] = initFunc(this.resolve.bind(this, ac))[ac];
+    Object.keys(action_map).forEach(function(ac) {
+      Action[ac] = initFunc(_this.resolve.bind(_this, ac))[ac];
     });
     this.actions.push(Action);
     return Action;
-  }
+  },
 
   /**
    * @param: { [[ store1, store2, ...]] , storeHandlers }
    */
-  createStore(...args) {
-    var arg0 = args[0];
+  createStore: function() {
+    var _this2 = this;
+
+    var arg0 = arguments[0];
     var storeHandlers = null;
     //继承其他store
-    if(Util.isArray(arg0)){
-      storeHandlers = args[1]();
-      arg0.forEach( s => {
+    if (Util.isArray(arg0)) {
+      storeHandlers = arguments[1]();
+      arg0.forEach(function(s) {
         invariant(s && s.dispatchToken, 'Illegal store!! please check the stores you want to inherit..');
-        this.destroyStore(s);
+        _this2.destroyStore(s);
         storeHandlers = Util.assign(s._handlers, storeHandlers);
       });
-    }else{
+    } else {
       storeHandlers = arg0();
     }
 
     //清除上一个Store
-    if(this.store){
+    if (this.store) {
       this.destroyStore(this.store);
     }
 
     var store = new Store(this, storeHandlers);
     this.store = store; //存储一下应用，便于查看
     return store;
-  }
+  },
 
-  destroyStore(store) {
-    if(!store._destroyed){
+  destroyStore: function(store) {
+    if (!store._destroyed) {
       this.dispatcher.unregister(store && store.dispatchToken);
       store._destroyed = true;
     }
-  }
+  },
 
-  isDev() {
+  isDev: function() {
     return location.hostname == 'localhost' || location.hostname == '127.0.0.1';
-  }
+  },
 
-  getLogStyle(data) {
+  getLogStyle: function(data) {
     //data 为空时，给出红色提醒
     var green = '#4EE695';
     var red = 'red';
     return 'font-weight: bold;color:' + (data ? green : red);
   }
+};
 
-}
-
-export default Flux;
+module.exports = Flux;
