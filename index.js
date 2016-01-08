@@ -7,7 +7,7 @@ var Dispatcher = require('./lib/dispatcher');
 var Store = require('./lib/store');
 var Util = require('./lib/util');
 
-function Flux() {
+function Flux(opts) {
   this.dev = opts ? opts.dev : this.isDev();
   this.trace = opts && opts.trace;
 
